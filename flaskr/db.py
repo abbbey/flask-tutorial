@@ -1,3 +1,4 @@
+""" Methods for accessing post/user tables in the database """
 import sqlite3
 
 import click

@@ -1,4 +1,4 @@
-
+""" Create the flaskr app """
 import os
 from flask import Flask
 import flaskr.db as db
@@ -6,7 +6,9 @@ import flaskr.auth as auth
 import flaskr.blog as blog
 
 def create_app(test_config=None):
-    # create and configure the app
+    """ Create and configure the app. Uses config.py for default settings.
+    param test_config: use given dictionary instead of loading default config.
+    """
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
             SECRET_KEY='dev',
@@ -21,9 +23,9 @@ def create_app(test_config=None):
         app.config.from_mapping(test_config)
 
     try:
-       os.makedirs(app.instance_path)
+        os.makedirs(app.instance_path)
     except OSError:
-       pass
+        pass
 
     db.init_app(app)
     app.register_blueprint(auth.bp)
@@ -33,6 +35,6 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/hello')
     def hello():
-       return 'Hello, World!'
+        return 'Hello, World!'
 
     return app

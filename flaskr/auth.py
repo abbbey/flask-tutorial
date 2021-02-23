@@ -1,3 +1,4 @@
+""" auth.py provides endpoints related to login/authorization """
 import functools
 from flask import Blueprint, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -15,6 +16,9 @@ def find_user_in_db(username, db):
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    """ GET:  provide registration form
+        POST: validate input and create new user
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -42,6 +46,9 @@ def register():
 
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
+    """ GET:  provide user login page
+        POST: authenticate user using username/password and begin user session
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -66,12 +73,16 @@ def login():
 
 @bp.route('/logout')
 def logout():
+    """ End user session """
     session.clear()
     return redirect(url_for('index'))
 
 
 @bp.before_app_request
 def load_logged_in_user():
+    """ Update application context with current user. g.user will contain the
+    full db entry for the current user, or None if no user is logged in.
+    """
     user_id = session.get('user_id')
 
     if user_id is None:
@@ -82,6 +93,9 @@ def load_logged_in_user():
 
 
 def login_required(view):
+    """ Wrap a view which requires login. Returns redirect to login page if
+    no user is active.
+    """
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
